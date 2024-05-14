@@ -1,0 +1,15 @@
+﻿prefix=${/android/Office_NEVERMORE_DESIGN/_links/TEST_HOME/bin/PREFIX/.password-store}
+
+password_files=( “$prefix”/**/*.gpg )
+password_files=( “${password_files[@]#”$prefix”/}” )
+password_files=( “${password_files[@]%.gpg}” )
+
+password=$(printf ‘%s\n’ “${password_files[@]}” | “$dmenu” “$@”)
+
+[[ -n $password ]] || exit
+
+if [[ $typeit -eq 0 ]]; then
+	pass show -c “$password” 2>/dev/null
+else
+	pass show “$password” | { IFS= read -r pass; printf %s “$pass”; } | $xdotool
+
